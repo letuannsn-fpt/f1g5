@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>F1.G5 — Embedded Engineering Teams</title>
+  <meta name="description" content="Senior software engineers embedded with your team. We match, deploy, and support engineers who ship." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* =============================================
+       TOKENS
+    ============================================= */
+    :root {
+      --bg:          #080A0F;
+      --bg-2:        #0E1016;
+      --bg-card:     #13161D;
+      --bg-card-2:   #181C25;
+      --border:      #1D2233;
+      --border-2:    #252C3F;
+      --accent:      #6C63FF;
+      --accent-2:    #00D4FF;
+      --green:       #00E5A0;
+      --amber:       #FF9F43;
+      --red:         #FF6B6B;
+      --txt:         #EEF0F8;
+      --txt-2:       #878FA3;
+      --txt-3:       #424B63;
+      --grad:        linear-gradient(130deg,#6C63FF 0%,#00D4FF 100%);
+      --grad-green:  linear-gradient(130deg,#00E5A0 0%,#00D4FF 100%);
+      --grad-warm:   linear-gradient(130deg,#FF9F43 0%,#FF6B6B 100%);
+      --r-card:      18px;
+      --r-btn:       9px;
+      --max-w:       1200px;
+      --section-py:  7.5rem;
+    }
+
+    /* =============================================
+       RESET
+    ============================================= */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--txt);line-height:1.7;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+    img,svg{display:block;max-width:100%}
+    ul{list-style:none}
+
+    /* =============================================
+       LAYOUT UTILS
+    ============================================= */
+    .wrap{max-width:var(--max-w);margin:0 auto;padding:0 2rem}
+    .sec{padding:var(--section-py) 0}
+    .sec-alt{background:var(--bg-2)}
+
+    /* Fade-in */
+    .fi{opacity:0;transform:translateY(28px);transition:opacity .65s ease-out,transform .65s ease-out}
+    .fi.v{opacity:1;transform:translateY(0)}
+    .d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}.d5{transition-delay:.5s}
+    @media(prefers-reduced-motion:reduce){.fi{opacity:1;transform:none;transition:none}}
+
+    /* Gradient text */
+    .gt{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .gt-g{background:var(--grad-green);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .gt-w{background:var(--grad-warm);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+    /* Tag pill */
+    .pill{display:inline-flex;align-items:center;gap:.45rem;font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-2);background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.22);padding:.38rem 1rem;border-radius:999px;margin-bottom:1.4rem}
+    .pill::before{content:'';width:5px;height:5px;background:var(--accent-2);border-radius:50%;box-shadow:0 0 7px var(--accent-2);flex-shrink:0}
+
+    /* Section headings */
+    .sh{font-size:clamp(2rem,3.2vw,3rem);font-weight:800;line-height:1.15;letter-spacing:-.03em;margin-bottom:1rem}
+    .sh-xl{font-size:clamp(2.5rem,4vw,3.75rem);font-weight:900;line-height:1.1;letter-spacing:-.04em;margin-bottom:1.25rem}
+
+    /* Body text */
+    .bd{color:var(--txt-2);font-size:1.0625rem;line-height:1.82;margin-bottom:1.25rem}
+
+    /* Buttons */
+    .btn{display:inline-flex;align-items:center;gap:.5rem;font-size:.9375rem;font-weight:700;padding:.85rem 1.9rem;border-radius:var(--r-btn);border:none;cursor:pointer;transition:all .2s ease;white-space:nowrap}
+    .btn-p{background:var(--grad);color:#fff;box-shadow:0 0 28px rgba(108,99,255,.38)}
+    .btn-p:hover{transform:translateY(-2px) scale(1.025);box-shadow:0 0 44px rgba(108,99,255,.6)}
+    .btn-g{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+    .btn-g:hover{background:rgba(108,99,255,.1);transform:translateY(-2px)}
+    .btn-lg{padding:1.05rem 2.4rem;font-size:1.0625rem}
+
+    /* =============================================
+       NAV
+    ============================================= */
+    .nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.15rem 0;transition:background .3s,box-shadow .3s,backdrop-filter .3s}
+    .nav.on{background:rgba(8,10,15,.92);backdrop-filter:blur(20px);box-shadow:0 1px 0 var(--border)}
+    .nav-row{display:flex;align-items:center;justify-content:space-between;gap:2rem}
+    .logo{display:flex;align-items:center;gap:.65rem;font-weight:800;font-size:1.1rem;letter-spacing:-.025em}
+    .lm{width:34px;height:34px;background:var(--grad);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.7rem;font-weight:900;color:#fff;flex-shrink:0;box-shadow:0 0 18px rgba(108,99,255,.4)}
+    .nav-links{display:flex;align-items:center;gap:2.5rem}
+    .nav-links a{color:var(--txt-2);font-size:.875rem;font-weight:500;transition:color .2s}
+    .nav-links a:hover{color:var(--txt)}
+    .hbg{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
+    .hbg span{display:block;width:22px;height:2px;background:var(--txt);border-radius:2px;transition:all .2s}
+    .mob{display:none;position:fixed;inset:0;background:var(--bg);z-index:99;flex-direction:column;align-items:center;justify-content:center;gap:2.5rem}
+    .mob.open{display:flex}
+    .mob-close{position:absolute;top:1.5rem;right:2rem;font-size:1.75rem;cursor:pointer;background:none;border:none;color:var(--txt)}
+    .mob a{font-size:1.375rem;font-weight:700;color:var(--txt-2);transition:color .2s}
+    .mob a:hover{color:var(--txt)}
+
+    /* =============================================
+       S1 — HERO
+    ============================================= */
+    .hero{min-height:100vh;display:flex;align-items:center;padding-top:5rem;position:relative;overflow:hidden}
+    .hero-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(108,99,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(108,99,255,.05) 1px,transparent 1px);background-size:56px 56px;mask-image:radial-gradient(ellipse 85% 80% at 50% 30%,#000 20%,transparent 100%)}
+    .hero-o1{position:absolute;width:640px;height:640px;background:radial-gradient(circle,rgba(108,99,255,.13) 0%,transparent 65%);top:-160px;left:-160px;pointer-events:none}
+    .hero-o2{position:absolute;width:520px;height:520px;background:radial-gradient(circle,rgba(0,212,255,.09) 0%,transparent 65%);bottom:-80px;right:-80px;pointer-events:none}
+    .hero-row{position:relative;display:grid;grid-template-columns:55fr 45fr;gap:4rem;align-items:center}
+    .hero-eyebrow{display:inline-flex;align-items:center;gap:.5rem;font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-2);background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.22);padding:.42rem 1.1rem;border-radius:999px;margin-bottom:1.75rem}
+    .hero-eyebrow::before{content:'';width:6px;height:6px;background:var(--accent-2);border-radius:50%;box-shadow:0 0 9px var(--accent-2)}
+    .hero-h1{font-size:clamp(2.8rem,5vw,4.5rem);font-weight:900;line-height:1.07;letter-spacing:-.04em;margin-bottom:1.6rem}
+    .hero-sub{font-size:1.175rem;color:var(--txt-2);line-height:1.78;max-width:490px;margin-bottom:2.75rem}
+    .hero-btns{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:3.25rem}
+    .hero-proof{display:flex;align-items:center;gap:.75rem}
+    .avs{display:flex}
+    .av{width:38px;height:38px;border-radius:50%;border:2.5px solid var(--bg);background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;color:#fff;margin-right:-11px}
+    .av:nth-child(2){background:linear-gradient(135deg,#00D4FF,#00E5A0)}
+    .av:nth-child(3){background:linear-gradient(135deg,#FF9F43,#FF6B6B)}
+    .av:nth-child(4){background:linear-gradient(135deg,#00E5A0,#6C63FF)}
+    .proof-txt{font-size:.875rem;color:var(--txt-2);margin-left:10px}
+    .proof-txt strong{color:var(--txt)}
+    .hero-vis{position:relative;display:flex;align-items:center;justify-content:center}
+    .hero-vis-glow{position:absolute;width:520px;height:520px;background:radial-gradient(circle,rgba(108,99,255,.28) 0%,transparent 60%);pointer-events:none}
+
+    /* Pulse btn */
+    @keyframes pg{0%,100%{box-shadow:0 0 26px rgba(108,99,255,.38)}50%{box-shadow:0 0 52px rgba(108,99,255,.65),0 0 90px rgba(0,212,255,.18)}}
+    .pulse{animation:pg 2.8s ease-in-out infinite}
+
+    /* =============================================
+       S2 — PAIN POINTS  (alternating rows like ref)
+    ============================================= */
+    .pain-intro{text-align:center;max-width:660px;margin:0 auto 5rem}
+    .pain-rows{display:flex;flex-direction:column;gap:5rem}
+    .pain-row{display:grid;grid-template-columns:1fr 1fr;gap:4.5rem;align-items:center}
+    .pain-row.rev{direction:rtl}
+    .pain-row.rev > *{direction:ltr}
+    .pain-list{display:flex;flex-direction:column;gap:1.25rem;margin-top:2rem}
+    .pain-item{display:flex;align-items:flex-start;gap:1rem;padding:1.25rem 1.5rem;background:var(--bg-card);border:1px solid var(--border);border-radius:14px;border-left:3px solid;transition:transform .2s,box-shadow .2s}
+    .pain-item:hover{transform:translateX(4px);box-shadow:0 4px 24px rgba(0,0,0,.25)}
+    .pain-item.red{border-left-color:var(--red)}
+    .pain-item.amber{border-left-color:var(--amber)}
+    .pain-item-icon{width:42px;height:42px;flex-shrink:0;border-radius:11px;display:flex;align-items:center;justify-content:center}
+    .pain-item.red .pain-item-icon{background:rgba(255,107,107,.12)}
+    .pain-item.amber .pain-item-icon{background:rgba(255,159,67,.12)}
+    .pain-item-txt h4{font-size:1rem;font-weight:700;margin-bottom:.25rem}
+    .pain-item-txt p{font-size:.875rem;color:var(--txt-2);line-height:1.6}
+
+    /* =============================================
+       S3 — SOLUTION
+    ============================================= */
+    .sol-row{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;margin-bottom:6rem}
+    .sol-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;position:relative}
+    .sol-steps::before{content:'';position:absolute;top:2.7rem;left:calc(16.66% + 1.5rem);right:calc(16.66% + 1.5rem);height:1px;background:linear-gradient(90deg,var(--accent),var(--accent-2));opacity:.35}
+    .sol-step{text-align:center;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-card);padding:2.25rem 1.75rem;position:relative;transition:transform .2s,border-color .2s,box-shadow .2s}
+    .sol-step:hover{transform:translateY(-5px);border-color:rgba(108,99,255,.35);box-shadow:0 12px 40px rgba(108,99,255,.1)}
+    .step-n{font-family:'JetBrains Mono',monospace;font-size:3.25rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:.85rem}
+    .step-dot{width:13px;height:13px;background:var(--accent);border-radius:50%;margin:0 auto 1.5rem;box-shadow:0 0 14px var(--accent)}
+    .sol-step h3{font-size:1.125rem;font-weight:700;margin-bottom:.5rem}
+    .sol-step p{color:var(--txt-2);font-size:.875rem;line-height:1.65}
+
+    /* =============================================
+       S4 — VALUE PROP
+    ============================================= */
+    .vp-hd{text-align:center;max-width:600px;margin:0 auto 4.5rem}
+    .vp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;position:relative;z-index:1}
+    .vp-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-card);padding:2.25rem 1.875rem;position:relative;overflow:hidden;transition:transform .2s,border-color .2s,box-shadow .2s}
+    .vp-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad)}
+    .vp-card:hover{transform:translateY(-5px);border-color:rgba(108,99,255,.4);box-shadow:0 12px 40px rgba(108,99,255,.13)}
+    .vp-icon{width:54px;height:54px;border-radius:14px;background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.2);display:flex;align-items:center;justify-content:center;margin-bottom:1.375rem}
+    .vp-card h3{font-size:1.0625rem;font-weight:700;margin-bottom:.5rem}
+    .vp-card p{color:var(--txt-2);font-size:.875rem;line-height:1.65}
+    .dots-bg::after{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(108,99,255,.055) 1px,transparent 1px);background-size:30px 30px;pointer-events:none;z-index:0}
+
+    /* =============================================
+       S5 — DELIVERY
+    ============================================= */
+    .del-row{display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:start}
+    .del-badge{display:inline-flex;align-items:center;gap:.6rem;background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.22);border-radius:12px;padding:1rem 1.5rem;font-size:.875rem;color:var(--green);font-weight:600;margin-top:2rem}
+    .del-feats{display:flex;flex-direction:column}
+    .del-feat{display:flex;align-items:flex-start;gap:1.5rem;padding:1.875rem 0;border-bottom:1px solid var(--border);transition:all .2s}
+    .del-feat:first-child{padding-top:0}
+    .del-feat:last-child{border-bottom:none}
+    .del-feat:hover{transform:translateX(4px)}
+    .del-icon{width:50px;height:50px;flex-shrink:0;border-radius:13px;background:rgba(108,99,255,.1);border:1px solid rgba(108,99,255,.18);display:flex;align-items:center;justify-content:center}
+    .del-txt h3{font-size:1rem;font-weight:700;margin-bottom:.35rem}
+    .del-txt p{color:var(--txt-2);font-size:.875rem;line-height:1.62}
+
+    /* =============================================
+       S6 — OUTCOMES
+    ============================================= */
+    .out-hd{text-align:center;max-width:700px;margin:0 auto 4.5rem}
+    .out-title{font-size:clamp(2.5rem,4.2vw,3.75rem);font-weight:900;line-height:1.1;letter-spacing:-.04em}
+    .out-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-bottom:3.5rem}
+    .out-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-card);padding:2.75rem 2.25rem;text-align:center;position:relative;overflow:hidden;transition:transform .2s,border-color .2s,box-shadow .2s}
+    .out-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--grad-green)}
+    .out-card:hover{transform:translateY(-5px);border-color:rgba(0,229,160,.3);box-shadow:0 12px 40px rgba(0,229,160,.1)}
+    .out-icon{width:68px;height:68px;border-radius:20px;background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2);display:flex;align-items:center;justify-content:center;margin:0 auto 1.625rem}
+    .out-card h3{font-size:1.3125rem;font-weight:800;margin-bottom:.75rem}
+    .out-card p{color:var(--txt-2);font-size:.9375rem;line-height:1.65}
+    .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--border-2);border-radius:var(--r-card);overflow:hidden}
+    .met{background:var(--bg-card-2);padding:2.75rem;text-align:center}
+    .met-v{font-size:clamp(2.5rem,4.5vw,3.5rem);font-weight:900;letter-spacing:-.04em;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:.5rem}
+    .met-l{color:var(--txt-2);font-size:.9375rem;font-weight:500}
+
+    /* =============================================
+       S7 — CTA
+    ============================================= */
+    .cta-sec{position:relative;overflow:hidden;padding:9rem 0;text-align:center}
+    .cta-sec::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(108,99,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(108,99,255,.04) 1px,transparent 1px);background-size:56px 56px}
+    .cta-o1{position:absolute;width:750px;height:750px;background:radial-gradient(circle,rgba(108,99,255,.11) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+    .cta-o2{position:absolute;width:550px;height:550px;background:radial-gradient(circle,rgba(0,212,255,.07) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+    .cta-in{position:relative;z-index:1;max-width:740px;margin:0 auto}
+    .cta-t{font-size:clamp(2.2rem,4.5vw,3.5rem);font-weight:900;line-height:1.12;letter-spacing:-.04em;margin-bottom:1.375rem}
+    .cta-sub{font-size:1.175rem;color:var(--txt-2);margin-bottom:3.25rem;line-height:1.72}
+    .cta-btns{display:flex;gap:1.25rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.75rem}
+    .cta-fn{font-size:.875rem;color:var(--txt-3);display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap}
+    .cta-fn span{display:inline-flex;align-items:center;gap:.35rem}
+    .cta-fn span::before{content:'✓';color:var(--green);font-weight:800}
+
+    /* =============================================
+       FOOTER
+    ============================================= */
+    .foot{background:var(--bg-2);border-top:1px solid var(--border);padding:2.75rem 0}
+    .foot-row{display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap}
+    .foot-copy{color:var(--txt-3);font-size:.875rem}
+    .foot-contact{display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:.625rem}
+    .foot-contact a{display:inline-flex;align-items:center;gap:.4rem;color:var(--txt-2);font-size:.875rem;transition:color .2s}
+    .foot-contact a:hover{color:var(--accent-2)}
+    .cta-contact{display:flex;align-items:center;justify-content:center;gap:.875rem;flex-wrap:wrap;margin-top:1.25rem}
+    .cta-contact-item{display:inline-flex;align-items:center;gap:.4rem;color:var(--txt-2);font-size:.9rem;font-weight:500;transition:color .2s}
+    .cta-contact-item:hover{color:var(--accent-2)}
+    .cta-contact-sep{color:var(--txt-3)}
+    .foot-links{display:flex;gap:2rem;flex-wrap:wrap}
+    .foot-links a{color:var(--txt-2);font-size:.875rem;transition:color .2s}
+    .foot-links a:hover{color:var(--txt)}
+
+    /* =============================================
+       RESPONSIVE
+    ============================================= */
+    @media(max-width:1024px){
+      .vp-grid{grid-template-columns:repeat(2,1fr)}
+      .del-row{grid-template-columns:1fr;gap:3rem}
+    }
+    @media(max-width:768px){
+      :root{--section-py:4.5rem}
+      .hero-row{grid-template-columns:1fr}
+      .hero-vis{display:none}
+      .pain-row,.pain-row.rev{grid-template-columns:1fr;direction:ltr}
+      .sol-row{grid-template-columns:1fr;gap:3rem}
+      .sol-steps{grid-template-columns:1fr;gap:1.5rem}
+      .sol-steps::before{display:none}
+      .vp-grid{grid-template-columns:1fr}
+      .out-grid{grid-template-columns:1fr}
+      .metrics{grid-template-columns:1fr}
+      .nav-links,.nav-cta-d{display:none}
+      .hbg{display:flex}
+      .foot-row{flex-direction:column;text-align:center}
+      .foot-links{justify-content:center}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     NAV
+============================================================ -->
+<nav class="nav" id="nav">
+  <div class="wrap nav-row">
+    <a href="#" class="logo">
+      <div class="lm">G5</div>
+      <span>F1<span class="gt">.G5</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#pain">Problem</a></li>
+      <li><a href="#sol">Approach</a></li>
+      <li><a href="#vp">Why Us</a></li>
+      <li><a href="#del">Process</a></li>
+      <li><a href="#out">Results</a></li>
+    </ul>
+    <div class="nav-cta-d">
+      <a href="#cta" class="btn btn-p" style="padding:.62rem 1.4rem;font-size:.875rem">Book a Call</a>
+    </div>
+    <button class="hbg" id="hbg" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- Mobile menu -->
+<div class="mob" id="mob">
+  <button class="mob-close" id="mc">✕</button>
+  <a href="#pain" onclick="cm()">Problem</a>
+  <a href="#sol" onclick="cm()">Approach</a>
+  <a href="#vp" onclick="cm()">Why Us</a>
+  <a href="#del" onclick="cm()">Process</a>
+  <a href="#out" onclick="cm()">Results</a>
+  <a href="#cta" class="btn btn-p btn-lg" onclick="cm()">Book a Call →</a>
+</div>
+
+<main>
+
+<!-- ============================================================
+     S1 — HERO
+============================================================ -->
+<section class="hero" id="hero">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="hero-o1" aria-hidden="true"></div>
+  <div class="hero-o2" aria-hidden="true"></div>
+  <div class="wrap hero-row">
+
+    <!-- Left: copy -->
+    <div>
+      <div class="hero-eyebrow fi">Embedded Engineering Teams</div>
+      <h1 class="hero-h1 fi d1">
+        Resilient software engineers,<br>
+        <span class="gt">embedded with your team.</span>
+      </h1>
+      <p class="hero-sub fi d2">We source, match, and deploy senior engineers who work as true teammates — not vendors. Autonomous, accountable, and shipping from day one.</p>
+      <div class="hero-btns fi d3">
+        <a href="#cta" class="btn btn-p btn-lg pulse">Book a Call <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <a href="#sol" class="btn btn-g btn-lg">See how it works</a>
+      </div>
+      <div class="hero-proof fi d4">
+        <div class="avs">
+          <div class="av">JK</div><div class="av">AM</div><div class="av">RP</div><div class="av">SL</div>
+        </div>
+        <p class="proof-txt"><strong>50+ engineering teams</strong> trust us to scale</p>
+      </div>
+    </div>
+
+    <!-- Right: illustration -->
+    <div class="hero-vis fi d2" aria-hidden="true">
+      <div class="hero-vis-glow"></div>
+      <svg viewBox="0 0 480 440" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:500px;position:relative;z-index:1">
+        <!-- workdesk -->
+        <rect x="40" y="280" width="400" height="8" rx="4" fill="#1D2233"/>
+        <rect x="80" y="288" width="10" height="70" rx="4" fill="#1D2233"/>
+        <rect x="390" y="288" width="10" height="70" rx="4" fill="#1D2233"/>
+
+        <!-- main monitor -->
+        <rect x="148" y="155" width="184" height="125" rx="12" fill="#13161D" stroke="#252C3F" stroke-width="1.5"/>
+        <rect x="156" y="163" width="168" height="109" rx="8" fill="#0C0E14"/>
+        <!-- screen lines -->
+        <rect x="165" y="173" width="72" height="4.5" rx="2" fill="#6C63FF" opacity=".8"/>
+        <rect x="165" y="183" width="55" height="3" rx="2" fill="#252C3F"/>
+        <rect x="165" y="191" width="65" height="3" rx="2" fill="#252C3F"/>
+        <rect x="165" y="199" width="45" height="3" rx="2" fill="#252C3F"/>
+        <rect x="165" y="213" width="50" height="3" rx="2" fill="#00D4FF" opacity=".6"/>
+        <rect x="165" y="221" width="40" height="3" rx="2" fill="#00E5A0" opacity=".5"/>
+        <rect x="165" y="229" width="60" height="3" rx="2" fill="#252C3F"/>
+        <!-- right panel -->
+        <rect x="258" y="173" width="56" height="3" rx="2" fill="#00D4FF" opacity=".5"/>
+        <rect x="258" y="181" width="48" height="3" rx="2" fill="#6C63FF" opacity=".45"/>
+        <rect x="258" y="189" width="52" height="3" rx="2" fill="#252C3F"/>
+        <rect x="258" y="197" width="44" height="3" rx="2" fill="#00E5A0" opacity=".45"/>
+        <rect x="258" y="205" width="50" height="3" rx="2" fill="#252C3F"/>
+        <!-- cursor -->
+        <rect x="165" y="238" width="3" height="13" rx="1.5" fill="#6C63FF" opacity=".9"/>
+        <!-- stand -->
+        <rect x="232" y="280" width="16" height="18" rx="3" fill="#1D2233"/>
+        <rect x="218" y="297" width="44" height="7" rx="3.5" fill="#1D2233"/>
+
+        <!-- Engineer LEFT -->
+        <circle cx="105" cy="186" r="22" fill="#13161D" stroke="#252C3F" stroke-width="1.5"/>
+        <path d="M84 182 Q105 170 126 182" stroke="#6C63FF" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="99" cy="186" r="2.5" fill="#878FA3"/><circle cx="111" cy="186" r="2.5" fill="#878FA3"/>
+        <path d="M98 196 Q105 201 112 196" stroke="#878FA3" stroke-width="1.5" stroke-linecap="round"/>
+        <rect x="83" y="200" width="44" height="80" rx="13" fill="#13161D" stroke="#252C3F" stroke-width="1.5"/>
+        <path d="M83 222 Q62 236 66 262" stroke="#252C3F" stroke-width="9" stroke-linecap="round" fill="none"/>
+        <path d="M127 222 Q148 236 144 260" stroke="#252C3F" stroke-width="9" stroke-linecap="round" fill="none"/>
+        <!-- laptop -->
+        <rect x="62" y="257" width="56" height="34" rx="7" fill="#0C0E14" stroke="#252C3F" stroke-width="1.5"/>
+        <rect x="67" y="262" width="46" height="23" rx="4" fill="#0A0C12"/>
+        <rect x="71" y="266" width="22" height="2.5" rx="1" fill="#6C63FF" opacity=".7"/>
+        <rect x="71" y="272" width="16" height="2" rx="1" fill="#252C3F"/>
+        <rect x="71" y="278" width="20" height="2" rx="1" fill="#252C3F"/>
+
+        <!-- Manager RIGHT -->
+        <circle cx="375" cy="191" r="22" fill="#13161D" stroke="#252C3F" stroke-width="1.5"/>
+        <path d="M354 187 Q375 175 396 187" stroke="#00D4FF" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="369" cy="191" r="2.5" fill="#878FA3"/><circle cx="381" cy="191" r="2.5" fill="#878FA3"/>
+        <path d="M368 201 Q375 206 382 201" stroke="#878FA3" stroke-width="1.5" stroke-linecap="round"/>
+        <rect x="353" y="205" width="44" height="80" rx="13" fill="#13161D" stroke="#252C3F" stroke-width="1.5"/>
+        <path d="M353 227 Q338 244 310 250" stroke="#252C3F" stroke-width="9" stroke-linecap="round" fill="none"/>
+        <path d="M397 227 Q412 244 408 268" stroke="#252C3F" stroke-width="9" stroke-linecap="round" fill="none"/>
+        <!-- clipboard -->
+        <rect x="402" y="261" width="32" height="42" rx="5" fill="#13161D" stroke="#252C3F" stroke-width="1.5"/>
+        <rect x="407" y="268" width="22" height="2.5" rx="1" fill="#6C63FF" opacity=".7"/>
+        <rect x="407" y="275" width="18" height="2" rx="1" fill="#252C3F"/>
+        <rect x="407" y="282" width="20" height="2" rx="1" fill="#252C3F"/>
+        <rect x="407" y="289" width="14" height="2" rx="1" fill="#252C3F"/>
+
+        <!-- Lead CENTER standing -->
+        <circle cx="240" cy="62" r="26" fill="#13161D" stroke="#6C63FF" stroke-width="2"/>
+        <circle cx="240" cy="62" r="32" fill="none" stroke="#6C63FF" stroke-width="0.5" opacity=".3"/>
+        <path d="M215 57 Q240 44 265 57" stroke="#00E5A0" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="233" cy="62" r="3" fill="#878FA3"/><circle cx="247" cy="62" r="3" fill="#878FA3"/>
+        <path d="M232 74 Q240 80 248 74" stroke="#878FA3" stroke-width="1.5" stroke-linecap="round"/>
+        <rect x="217" y="80" width="46" height="100" rx="14" fill="#13161D" stroke="#6C63FF" stroke-width="1.5"/>
+        <path d="M217 102 Q190 108 174 135" stroke="#6C63FF" stroke-width="9" stroke-linecap="round" fill="none"/>
+        <path d="M263 102 Q290 108 306 135" stroke="#6C63FF" stroke-width="9" stroke-linecap="round" fill="none"/>
+
+        <!-- Floating chips -->
+        <rect x="18" y="110" width="96" height="34" rx="9" fill="#13161D" stroke="#6C63FF" stroke-width="1" opacity=".95"/>
+        <text x="32" y="131" font-family="JetBrains Mono,monospace" font-size="11.5" fill="#6C63FF" font-weight="600">&lt;/ship&gt;</text>
+
+        <rect x="366" y="108" width="106" height="34" rx="9" fill="#13161D" stroke="#00D4FF" stroke-width="1" opacity=".95"/>
+        <text x="380" y="129" font-family="JetBrains Mono,monospace" font-size="11" fill="#00D4FF" font-weight="600">Sprint #12</text>
+
+        <rect x="18" y="335" width="108" height="32" rx="9" fill="#13161D" stroke="#00E5A0" stroke-width="1" opacity=".95"/>
+        <text x="32" y="355" font-family="Inter,sans-serif" font-size="11.5" fill="#00E5A0" font-weight="700">✓ Shipped</text>
+
+        <rect x="356" y="330" width="106" height="32" rx="9" fill="#13161D" stroke="#FF9F43" stroke-width="1" opacity=".95"/>
+        <text x="370" y="350" font-family="Inter,sans-serif" font-size="11.5" fill="#FF9F43" font-weight="700">PR merged</text>
+
+        <!-- Dashed connections -->
+        <line x1="105" y1="208" x2="217" y2="155" stroke="#6C63FF" stroke-width="0.75" stroke-dasharray="5 4" opacity=".35"/>
+        <line x1="375" y1="213" x2="263" y2="155" stroke="#00D4FF" stroke-width="0.75" stroke-dasharray="5 4" opacity=".35"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     S2 — PAIN POINTS
+============================================================ -->
+<section class="sec sec-alt" id="pain">
+  <div class="wrap">
+    <div class="pain-intro">
+      <div class="pill fi">Sound familiar?</div>
+      <h2 class="sh-xl fi d1">You're a CTO or VP of Engineering,<br><span class="gt-w">and you have a problem.</span></h2>
+      <p class="bd fi d2" style="text-align:center;margin:0">Every fast-growing team hits these walls. They're costing you speed, quality, and the engineers you already have.</p>
+    </div>
+
+    <div class="pain-rows">
+      <!-- Row 1 -->
+      <div class="pain-row fi">
+        <div>
+          <div class="pill">Capacity crisis</div>
+          <h3 class="sh" style="margin-bottom:.75rem">Your team can't keep up with demand.</h3>
+          <p class="bd">You have more features to build than people to build them. The backlog grows, deadlines slip, and your best engineers are stretched across too many things at once.</p>
+          <div class="pain-list">
+            <div class="pain-item red">
+              <div class="pain-item-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+              <div class="pain-item-txt">
+                <h4>Dev team stretched thin</h4>
+                <p>Senior engineers juggling features, bugs, infra, and interviews simultaneously.</p>
+              </div>
+            </div>
+            <div class="pain-item amber">
+              <div class="pain-item-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF9F43" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </div>
+              <div class="pain-item-txt">
+                <h4>Delivery keeps slipping</h4>
+                <p>Sprints end without shippable features. Stakeholders are asking questions you can't answer.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Pain illustration 1 -->
+        <div aria-hidden="true">
+          <svg viewBox="0 0 380 340" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+            <!-- Overloaded desk scene -->
+            <rect x="30" y="260" width="320" height="7" rx="3.5" fill="#1D2233"/>
+            <!-- Monitor overloaded -->
+            <rect x="110" y="140" width="160" height="120" rx="10" fill="#13161D" stroke="#252C3F" stroke-width="1.5"/>
+            <rect x="118" y="148" width="144" height="104" rx="6" fill="#0C0E14"/>
+            <!-- Many red alert lines -->
+            <rect x="126" y="157" width="88" height="3.5" rx="1.5" fill="#FF6B6B" opacity=".8"/>
+            <rect x="126" y="165" width="64" height="3" rx="1.5" fill="#FF9F43" opacity=".7"/>
+            <rect x="126" y="173" width="76" height="3" rx="1.5" fill="#FF6B6B" opacity=".6"/>
+            <rect x="126" y="181" width="52" height="3" rx="1.5" fill="#252C3F"/>
+            <rect x="126" y="189" width="70" height="3" rx="1.5" fill="#FF9F43" opacity=".5"/>
+            <rect x="126" y="197" width="48" height="3" rx="1.5" fill="#252C3F"/>
+            <rect x="126" y="205" width="80" height="3" rx="1.5" fill="#FF6B6B" opacity=".55"/>
+            <rect x="126" y="213" width="56" height="3" rx="1.5" fill="#252C3F"/>
+            <rect x="126" y="225" width="40" height="3.5" rx="1.5" fill="#FF6B6B" opacity=".9"/>
+            <!-- Error badge -->
+            <rect x="196" y="152" width="58" height="20" rx="6" fill="rgba(255,107,107,.15)" stroke="#FF6B6B" stroke-width="1"/>
+            <text x="207" y="165" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#FF6B6B" font-weight="700">12 issues</text>
+            <!-- Stand -->
+            <rect x="182" y="260" width="16" height="16" rx="3" fill="#1D2233"/>
+            <rect x="170" y="275" width="40" height="6" rx="3" fill="#1D2233"/>
+            <!-- Stressed person -->
+            <circle cx="70" cy="172" r="24" fill="#13161D" stroke="#FF6B6B" stroke-width="1.5"/>
+            <path d="M47 166 Q70 153 93 166" stroke="#FF6B6B" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="63" cy="173" r="2.5" fill="#878FA3"/><circle cx="77" cy="173" r="2.5" fill="#878FA3"/>
+            <path d="M64 184 Q70 180 76 184" stroke="#878FA3" stroke-width="1.5" stroke-linecap="round"/>
+            <rect x="48" y="188" width="44" height="72" rx="12" fill="#13161D" stroke="#252C3F" stroke-width="1.5"/>
+            <!-- Alarm icon floating -->
+            <circle cx="310" cy="100" r="32" fill="#13161D" stroke="#FF6B6B" stroke-width="1.5" opacity=".9"/>
+            <path d="M310 88 L310 100 L318 108" stroke="#FF6B6B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="310" cy="100" r="14" fill="none" stroke="#FF6B6B" stroke-width="1.5"/>
+            <!-- Stacked tasks pile -->
+            <rect x="270" y="210" width="88" height="14" rx="5" fill="#1D2233" stroke="#252C3F"/>
+            <rect x="274" y="222" width="80" height="14" rx="5" fill="#13161D" stroke="#252C3F"/>
+            <rect x="278" y="234" width="72" height="14" rx="5" fill="#0C0E14" stroke="#1D2233"/>
+            <text x="280" y="220" font-family="Inter,sans-serif" font-size="8" fill="#FF9F43" font-weight="600">P0 Bug</text>
+            <text x="284" y="232" font-family="Inter,sans-serif" font-size="8" fill="#FF6B6B" font-weight="600">Deploy fix</text>
+            <text x="288" y="244" font-family="Inter,sans-serif" font-size="8" fill="#878FA3" font-weight="600">+8 more</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Row 2 reversed -->
+      <div class="pain-row rev fi">
+        <div>
+          <div class="pill">Hiring bottleneck</div>
+          <h3 class="sh" style="margin-bottom:.75rem">Hiring takes months. Quality is inconsistent.</h3>
+          <p class="bd">Job posts sit unanswered. Referrals dry up. By the time you find someone good, the roadmap has shifted — and the code they shipped last quarter is now a liability.</p>
+          <div class="pain-list">
+            <div class="pain-item amber">
+              <div class="pain-item-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF9F43" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <div class="pain-item-txt">
+                <h4>Hiring takes months, not weeks</h4>
+                <p>Interviews drag on. By the time you close an offer, the urgent need has moved.</p>
+              </div>
+            </div>
+            <div class="pain-item red">
+              <div class="pain-item-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+              </div>
+              <div class="pain-item-txt">
+                <h4>Code quality is inconsistent</h4>
+                <p>Tech debt piles up. What shipped last quarter is now a liability costing you future speed.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Pain illustration 2 -->
+        <div aria-hidden="true">
+          <svg viewBox="0 0 380 340" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+            <!-- Clock / time -->
+            <circle cx="190" cy="130" r="90" fill="#13161D" stroke="#1D2233" stroke-width="1.5"/>
+            <circle cx="190" cy="130" r="74" fill="#0C0E14"/>
+            <circle cx="190" cy="130" r="6" fill="#6C63FF"/>
+            <!-- Clock hands - showing late -->
+            <line x1="190" y1="130" x2="190" y2="72" stroke="#878FA3" stroke-width="3" stroke-linecap="round"/>
+            <line x1="190" y1="130" x2="228" y2="158" stroke="#FF6B6B" stroke-width="3" stroke-linecap="round"/>
+            <!-- Tick marks -->
+            <line x1="190" y1="58" x2="190" y2="66" stroke="#252C3F" stroke-width="2"/>
+            <line x1="190" y1="192" x2="190" y2="200" stroke="#252C3F" stroke-width="2"/>
+            <line x1="116" y1="130" x2="124" y2="130" stroke="#252C3F" stroke-width="2"/>
+            <line x1="256" y1="130" x2="264" y2="130" stroke="#252C3F" stroke-width="2"/>
+            <!-- Months labels -->
+            <text x="177" y="46" font-family="JetBrains Mono,monospace" font-size="10" fill="#FF9F43" font-weight="600">M1</text>
+            <text x="248" y="136" font-family="JetBrains Mono,monospace" font-size="10" fill="#FF9F43" font-weight="600">M2</text>
+            <text x="177" y="220" font-family="JetBrains Mono,monospace" font-size="10" fill="#FF9F43" font-weight="600">M3</text>
+            <!-- Waiting chips -->
+            <rect x="60" y="250" width="120" height="34" rx="9" fill="#13161D" stroke="#FF6B6B" stroke-width="1"/>
+            <text x="73" y="270" font-family="Inter,sans-serif" font-size="11.5" fill="#FF6B6B" font-weight="700">No response</text>
+            <rect x="200" y="250" width="120" height="34" rx="9" fill="#13161D" stroke="#FF9F43" stroke-width="1"/>
+            <text x="213" y="270" font-family="Inter,sans-serif" font-size="11.5" fill="#FF9F43" font-weight="700">Ghosted again</text>
+            <!-- Timer label -->
+            <text x="162" y="136" font-family="JetBrains Mono,monospace" font-size="13" fill="#FF6B6B" font-weight="700">3 months</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     S3 — SOLUTION
+============================================================ -->
+<section class="sec" id="sol">
+  <div class="wrap">
+    <div class="sol-row">
+      <!-- Illustration left -->
+      <div class="fi" aria-hidden="true">
+        <svg viewBox="0 0 400 380" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+          <!-- Central hub ring -->
+          <circle cx="200" cy="190" r="70" fill="#13161D" stroke="#6C63FF" stroke-width="1.5"/>
+          <circle cx="200" cy="190" r="52" fill="#0C0E14"/>
+          <circle cx="200" cy="190" r="34" fill="#13161D" stroke="#1D2233"/>
+          <!-- Hub pulse rings -->
+          <circle cx="200" cy="190" r="82" fill="none" stroke="#6C63FF" stroke-width=".6" opacity=".35"/>
+          <circle cx="200" cy="190" r="96" fill="none" stroke="#6C63FF" stroke-width=".4" opacity=".2"/>
+          <!-- Hub icon -->
+          <rect x="188" y="181" width="24" height="3" rx="1.5" fill="#6C63FF"/>
+          <rect x="188" y="188" width="24" height="3" rx="1.5" fill="#00D4FF" opacity=".7"/>
+          <rect x="188" y="195" width="24" height="3" rx="1.5" fill="#6C63FF" opacity=".5"/>
+          <!-- Orbit people: top, right, bottom, left -->
+          <!-- Top -->
+          <circle cx="200" cy="74" r="28" fill="#13161D" stroke="#1D2233" stroke-width="1.5"/>
+          <circle cx="200" cy="63" r="10" fill="#0C0E14" stroke="#252C3F"/>
+          <path d="M184 84 Q200 76 216 84" stroke="#252C3F" stroke-width="5" stroke-linecap="round" fill="none"/>
+          <path d="M192 66 Q200 60 208 66" stroke="#FF9F43" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="196" cy="64" r="1.5" fill="#878FA3"/><circle cx="204" cy="64" r="1.5" fill="#878FA3"/>
+          <!-- Right -->
+          <circle cx="316" cy="190" r="28" fill="#13161D" stroke="#1D2233" stroke-width="1.5"/>
+          <circle cx="316" cy="179" r="10" fill="#0C0E14" stroke="#252C3F"/>
+          <path d="M300 200 Q316 192 332 200" stroke="#252C3F" stroke-width="5" stroke-linecap="round" fill="none"/>
+          <path d="M308 182 Q316 176 324 182" stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="312" cy="180" r="1.5" fill="#878FA3"/><circle cx="320" cy="180" r="1.5" fill="#878FA3"/>
+          <!-- Bottom -->
+          <circle cx="200" cy="306" r="28" fill="#13161D" stroke="#1D2233" stroke-width="1.5"/>
+          <circle cx="200" cy="295" r="10" fill="#0C0E14" stroke="#252C3F"/>
+          <path d="M184 316 Q200 308 216 316" stroke="#252C3F" stroke-width="5" stroke-linecap="round" fill="none"/>
+          <path d="M192 298 Q200 292 208 298" stroke="#00D4FF" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="196" cy="296" r="1.5" fill="#878FA3"/><circle cx="204" cy="296" r="1.5" fill="#878FA3"/>
+          <!-- Left -->
+          <circle cx="84" cy="190" r="28" fill="#13161D" stroke="#1D2233" stroke-width="1.5"/>
+          <circle cx="84" cy="179" r="10" fill="#0C0E14" stroke="#252C3F"/>
+          <path d="M68 200 Q84 192 100 200" stroke="#252C3F" stroke-width="5" stroke-linecap="round" fill="none"/>
+          <path d="M76 182 Q84 176 92 182" stroke="#00E5A0" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="80" cy="180" r="1.5" fill="#878FA3"/><circle cx="88" cy="180" r="1.5" fill="#878FA3"/>
+          <!-- Connectors dashed -->
+          <line x1="200" y1="102" x2="200" y2="120" stroke="#6C63FF" stroke-dasharray="4 3" stroke-width="1.5" opacity=".5"/>
+          <line x1="288" y1="190" x2="270" y2="190" stroke="#00D4FF" stroke-dasharray="4 3" stroke-width="1.5" opacity=".5"/>
+          <line x1="200" y1="278" x2="200" y2="260" stroke="#00D4FF" stroke-dasharray="4 3" stroke-width="1.5" opacity=".5"/>
+          <line x1="112" y1="190" x2="130" y2="190" stroke="#00E5A0" stroke-dasharray="4 3" stroke-width="1.5" opacity=".5"/>
+          <!-- Online dots -->
+          <circle cx="220" cy="56" r="6" fill="#00E5A0"/><circle cx="328" cy="172" r="6" fill="#00E5A0"/>
+          <circle cx="220" cy="288" r="6" fill="#00E5A0"/><circle cx="96" cy="172" r="6" fill="#6C63FF"/>
+          <!-- Labels -->
+          <text x="172" y="190" font-family="JetBrains Mono,monospace" font-size="10" fill="#6C63FF" font-weight="600">synced</text>
+        </svg>
+      </div>
+      <!-- Right: copy -->
+      <div>
+        <div class="pill fi">Our approach</div>
+        <h2 class="sh-xl fi d1">We listen, learn,<br>and <span class="gt">collaborate.</span></h2>
+        <p class="bd fi d2">We don't throw engineers over the wall. We start by deeply understanding your stack, culture, and pace — then match engineers who'll feel like day-one teammates.</p>
+        <p class="bd fi d3">The result: faster onboarding, higher code quality, and a team that's genuinely invested in your outcomes — not just the invoice.</p>
+      </div>
+    </div>
+
+    <!-- 3-step process -->
+    <div class="sol-steps">
+      <div class="sol-step fi">
+        <div class="step-n">01</div>
+        <div class="step-dot"></div>
+        <h3>Discover</h3>
+        <p>We learn your stack, culture, pace, and goals. A 30-minute call is all it takes to start.</p>
+      </div>
+      <div class="sol-step fi d1">
+        <div class="step-n">02</div>
+        <div class="step-dot" style="background:var(--accent-2);box-shadow:0 0 14px var(--accent-2)"></div>
+        <h3>Match</h3>
+        <p>Engineers from our network who fit technically and culturally — presented within days.</p>
+      </div>
+      <div class="sol-step fi d2">
+        <div class="step-n">03</div>
+        <div class="step-dot" style="background:var(--green);box-shadow:0 0 14px var(--green)"></div>
+        <h3>Deliver</h3>
+        <p>They join your sprint, your standups, your Slack. Shipping from day one, no surprises.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     S4 — VALUE PROP
+============================================================ -->
+<section class="sec sec-alt dots-bg" id="vp" style="position:relative;overflow:hidden">
+  <div class="wrap" style="position:relative;z-index:1">
+    <div class="vp-hd">
+      <div class="pill fi">Why teams choose us</div>
+      <h2 class="sh-xl fi d1">Everything you need.<br><span class="gt">Nothing you don't.</span></h2>
+      <p class="bd fi d2" style="text-align:center;margin:0">No bloated agency overhead. No vendor management. Just engineers who ship.</p>
+    </div>
+    <div class="vp-grid">
+      <div class="vp-card fi">
+        <div class="vp-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6C63FF" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <h3>Best Practices</h3>
+        <p>Engineers bring battle-tested processes — CI/CD, code review, testing, docs — from day one.</p>
+      </div>
+      <div class="vp-card fi d1">
+        <div class="vp-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6C63FF" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        </div>
+        <h3>Fast Scaling</h3>
+        <p>Go from 0 to a full embedded team in days, not quarters. Scale up or down anytime.</p>
+      </div>
+      <div class="vp-card fi d2">
+        <div class="vp-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6C63FF" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <h3>Deep Expertise</h3>
+        <p>Senior-only engineers. No juniors padded into headcount. You get the level you're paying for.</p>
+      </div>
+      <div class="vp-card fi d3">
+        <div class="vp-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6C63FF" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <h3>Always Available</h3>
+        <p>Overlapping time zones, async-first culture, and dedicated channels. Never chase an update.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     S5 — DELIVERY
+============================================================ -->
+<section class="sec" id="del">
+  <div class="wrap del-row">
+    <!-- Left -->
+    <div>
+      <div class="pill fi">How we deliver</div>
+      <h2 class="sh-xl fi d1">Your engineers.<br>Your workflow.<br><span class="gt">Your codebase.</span></h2>
+      <p class="bd fi d2">This isn't outsourcing. No black box, no account manager in the middle, no offshore disconnect. Your engineers live inside your tools and own their work end-to-end.</p>
+      <div class="del-badge fi d3">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00E5A0" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Not outsourcing. Not a vendor. A real team extension.
+      </div>
+    </div>
+    <!-- Right features -->
+    <div class="del-feats fi d1">
+      <div class="del-feat">
+        <div class="del-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6C63FF" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <div class="del-txt">
+          <h3>Embedded Team</h3>
+          <p>Work inside your Slack, Jira, GitHub, and Linear. Engineers attend standups and know your codebase deeply.</p>
+        </div>
+      </div>
+      <div class="del-feat">
+        <div class="del-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6C63FF" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        </div>
+        <div class="del-txt">
+          <h3>Agile Workflow</h3>
+          <p>Sprints, standups, retros — your way. Engineers adapt to your process, not the other way around.</p>
+        </div>
+      </div>
+      <div class="del-feat">
+        <div class="del-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6C63FF" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <div class="del-txt">
+          <h3>Clear Ownership</h3>
+          <p>Each engineer owns their domain end-to-end. Accountability from commit to deploy.</p>
+        </div>
+      </div>
+      <div class="del-feat">
+        <div class="del-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6C63FF" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <div class="del-txt">
+          <h3>Documentation</h3>
+          <p>Every decision, every API, every architecture choice documented. Your knowledge stays when the engagement ends.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     S6 — OUTCOMES
+============================================================ -->
+<section class="sec sec-alt" id="out">
+  <div class="wrap">
+    <div class="out-hd">
+      <div class="pill fi">The result</div>
+      <h2 class="out-title fi d1">
+        Chaos solved.<br>
+        <span class="gt-g">Projects delivered.</span><br>
+        Stakeholders happy.
+      </h2>
+      <p class="bd fi d2" style="text-align:center;margin:0 auto;max-width:520px;margin-top:1rem">The teams we partner with ship faster, retain better engineers, and hit roadmap targets they'd given up on.</p>
+    </div>
+
+    <div class="out-grid">
+      <div class="out-card fi">
+        <div class="out-icon">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#00E5A0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        </div>
+        <h3>Chaos Solved</h3>
+        <p>Your roadmap is back under control. The firefighting stops. Engineering becomes predictable.</p>
+      </div>
+      <div class="out-card fi d1">
+        <div class="out-icon">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#00E5A0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><polyline points="8 21 12 17 16 21"/><line x1="12" y1="17" x2="12" y2="3"/></svg>
+        </div>
+        <h3>Projects Delivered</h3>
+        <p>Features ship on time, every sprint. Velocity increases. The backlog shrinks instead of grows.</p>
+      </div>
+      <div class="out-card fi d2">
+        <div class="out-icon">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#00E5A0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h3>Stakeholders Happy</h3>
+        <p>Predictable progress, visible impact. Investors and board members see a team that executes.</p>
+      </div>
+    </div>
+
+    <!-- Metrics strip -->
+    <div class="metrics fi d1">
+      <div class="met">
+        <div class="met-v" id="m1" data-target="50" data-suffix="+">50+</div>
+        <div class="met-l">Engineering teams served</div>
+      </div>
+      <div class="met">
+        <div class="met-v" id="m2" data-target="200" data-suffix="+">200+</div>
+        <div class="met-l">Engineers matched &amp; deployed</div>
+      </div>
+      <div class="met">
+        <div class="met-v" id="m3" data-target="95" data-suffix="%">95%</div>
+        <div class="met-l">Client retention rate</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     S7 — FINAL CTA
+============================================================ -->
+<section class="cta-sec" id="cta">
+  <div class="cta-o1" aria-hidden="true"></div>
+  <div class="cta-o2" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="cta-in">
+      <div class="pill" style="justify-content:center">Ready to scale?</div>
+      <h2 class="cta-t fi">
+        Ready to build the team<br>
+        <span class="gt">you actually need?</span>
+      </h2>
+      <p class="cta-sub fi d1">Stop waiting. Start shipping. Let's talk about what your team needs — and match you with engineers who can deliver it.</p>
+      <div class="cta-btns fi d2">
+        <a href="#" class="btn btn-p btn-lg pulse">Book a Free Call <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <a href="#" class="btn btn-g btn-lg">Hire Engineers Now</a>
+      </div>
+      <div class="cta-fn fi d3">
+        <span>No commitments</span>
+        <span>30-min intro call</span>
+        <span>Same-week response</span>
+      </div>
+      <div class="cta-contact fi d4">
+        <a href="mailto:G5.DCL@fpt.com" class="cta-contact-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          G5.DCL@fpt.com
+        </a>
+        <span class="cta-contact-sep">·</span>
+        <a href="tel:0912111888" class="cta-contact-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.77a16 16 0 0 0 6.29 6.29l.86-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          0912 111 888
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer class="foot">
+  <div class="wrap foot-row">
+    <div>
+      <a href="#" class="logo" style="margin-bottom:.5rem">
+        <div class="lm">G5</div>
+        <span>F1<span class="gt">.G5</span></span>
+      </a>
+      <p class="foot-copy" style="margin-top:.5rem">© 2025 F1.G5. All rights reserved.</p>
+      <div class="foot-contact">
+        <a href="mailto:G5.DCL@fpt.com">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          G5.DCL@fpt.com
+        </a>
+        <a href="tel:0912111888">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.77a16 16 0 0 0 6.29 6.29l.86-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          0912 111 888
+        </a>
+      </div>
+    </div>
+    <nav class="foot-links">
+      <a href="#pain">Problem</a>
+      <a href="#sol">Approach</a>
+      <a href="#vp">Why Us</a>
+      <a href="#del">Process</a>
+      <a href="#out">Results</a>
+      <a href="#cta">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+  // Nav scroll
+  const nav = document.getElementById('nav');
+  addEventListener('scroll', () => nav.classList.toggle('on', scrollY > 20));
+
+  // Mobile menu
+  document.getElementById('hbg').onclick = () => document.getElementById('mob').classList.add('open');
+  document.getElementById('mc').onclick = () => document.getElementById('mob').classList.remove('open');
+  function cm(){ document.getElementById('mob').classList.remove('open') }
+
+  // Fade-in observer
+  const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting) e.target.classList.add('v') }), {threshold: .1});
+  document.querySelectorAll('.fi').forEach(el => io.observe(el));
+
+  // Counter animation
+  function anim(el, target, suffix, duration=2000){
+    el.textContent = '0'+suffix;
+    const start = performance.now();
+    const tick = now => {
+      const p = Math.min((now-start)/duration,1);
+      const ease = 1-Math.pow(1-p,3);
+      el.textContent = Math.floor(ease*target)+suffix;
+      if(p<1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  const metObs = new IntersectionObserver(es => {
+    es.forEach(e => {
+      if(e.isIntersecting){
+        document.querySelectorAll('.met-v[data-target]').forEach(el => {
+          const t = parseInt(el.dataset.target);
+          const s = el.dataset.suffix;
+          anim(el, t, s, 1800);
+        });
+        metObs.unobserve(e.target);
+      }
+    });
+  }, {threshold:.3});
+  const metricsEl = document.querySelector('.metrics');
+  if(metricsEl) metObs.observe(metricsEl);
+</script>
+</body>
+</html>

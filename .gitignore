@@ -1,0 +1,14 @@
+node_modules/
+package.json
+package-lock.json
+
+# Screenshot scripts
+snap*.cjs
+screenshot.js
+
+# Screenshots & reference images
+*.png
+*.jpg
+
+# Dev notes
+CLAUDE.md
